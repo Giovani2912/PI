@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Match {
+  id          String   @id @default(uuid())
+  timeA       String
+  timeB       String
+  placarTimeA String
+  placarTimeB String
+  imgTimeA    String
+  imgTimeB    String
+  data        DateTime @default(now())
+  News        News[]
+}
+
+model News {
+  id        String @id @default(uuid())
+  matchId   String
+  titulo    String
+  descricao String
+
+  match Match @relation(fields: [matchId], references: [id])
+}
+
+model Admin {
+  id    String @id @default(uuid())
+  nome  String
+  email String
+  senha String
+}
