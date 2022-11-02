@@ -1,42 +1,79 @@
-import * as React from 'react';
-import { Text, View } from 'react-native';
+import { useEffect, useState } from "react";
+import { Text, View, Image, FlatList, ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { MatchCard } from "./src/components/MatchCard";
 
 function GameScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Games!</Text>
-      <Text style={{backgroundColor: 'gray', height: 20, width: '80%', justifyContent: 'center', alignItems: 'center'}}>20/10/2022</Text>
-      <View style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'row', backgroundColor: 'gray', height: '30%', width: '80%'}}>
-        <View style={{flex: 2, height: '100%', width: '50%', alignItems: 'center', justifyContent: 'center'}}>
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', marginLeft: 20}}>
-            <Text style={{ flex: 1, backgroundColor: 'black', width: 30, height: 40, borderRadius: 200 / 2}}></Text>
-            <Text style={{ flex: 2,  marginLeft: 10}}>Time 1</Text>
-          </View>
-          <Text style={{flex: 1}}>PLacar Time 1</Text>
-        </View>
+  const [carregando, setCarregando] = useState(true);
+  const [dados, setDados] = useState([]);
 
-          <Text>X</Text>
+  useEffect(()=>{
+    fetch('http://localhost:3333/matches')
+      .then((resp) => resp.json())
+      .then((json)=>setDados(json))
+      .finally(()=>setCarregando(false))
+  })
 
-        <View style={{flex: 2, height: '100%', width: '50%', alignItems: 'center', justifyContent: 'center'}}>
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', marginLeft: 20}}>
-            <Text style={{ flex: 1, backgroundColor: 'black', width: 30, height: 40, borderRadius: 200 / 2}}></Text>
-            <Text style={{ flex: 2, marginLeft: 10}}>Time 2</Text>
+  return(
+    <View>
+      {
+        carregando ? <ActivityIndicator /> : (
+          <View>
+          <Text>Partidas recentes</Text>
+          <FlatList 
+            data={dados}
+            keyExtractor={({id}, index) => id}
+            renderItem={({item}) => (
+              <View>
+                <Text style={{color: 'white', fontSize: 44}}>{item.timeA}</Text>
+                <Text style={{color: 'white', fontSize: 44}}>{item.placarTimeA}</Text>
+                <Text style={{color: 'white', fontSize: 44}}>X</Text>
+                <Text style={{color: 'white', fontSize: 44}}>{item.timeB}</Text>
+                <Text style={{color: 'white', fontSize: 44}}>{item.placarTimeB}</Text>
+
+              </View>
+            )}
+          />
           </View>
-          <Text style={{flex: 1}}>PLacar Time 2</Text>
-        </View>
-      </View>      
+        )
+      }
     </View>
-  );
+  )
 }
 
 function NewsScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>News!</Text>
+  const [carregando, setCarregando] = useState(true);
+  const [dados, setDados] = useState([]);
+
+  useEffect(()=>{
+    fetch('http://localhost:3333/news')
+      .then((resp) => resp.json())
+      .then((json)=>setDados(json))
+      .finally(()=>setCarregando(false))
+  })
+
+  return(
+    <View>
+      {
+        carregando ? <ActivityIndicator /> : (
+          <View>
+          <Text>Notícias</Text>
+          <FlatList 
+            data={dados}
+            keyExtractor={({id}, index) => id}
+            renderItem={({item}) => (
+              <View>
+                <Text style={{color: 'white', fontSize: 44}}>{item.titulo}</Text>
+                <Text style={{color: 'white', fontSize: 44}}>{item.descricao}</Text>
+              </View>
+            )}
+          />
+          </View>
+        )
+      }
     </View>
-  );
+  )
 }
 
 const Tab = createBottomTabNavigator();

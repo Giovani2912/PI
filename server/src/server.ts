@@ -1,8 +1,10 @@
 import  express, { request, response }  from "express";
+
 import { PrismaClient } from '@prisma/client';
 
 const app = express();
 app.use(express.json())
+
 const prisma = new PrismaClient();
 
 app.get('/matches', async (request, response) => {
@@ -54,6 +56,10 @@ app.get('/matches/:id/news', async (request, response) => {
     return response.json(news)
 });
 
+app.get('/news', async(request, response) => {
+    const news = await prisma.news.findMany()
+        return response.json(news)
+})
 
 app.post('/matches/:id/news', async (request, response) => {
     
